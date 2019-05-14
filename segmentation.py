@@ -56,7 +56,7 @@ for f in ls:
 
     pct = sum(greens.ravel())/(r*c)
     plt.title('{:.4f} percent of the image is plant'.format(pct*100))
-    plt.show()
+    plt.savefig('plaatjes/masked_'+f)
 ##
 #    
 #def circle_points(resolution, center, radius):
