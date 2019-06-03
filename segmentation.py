@@ -10,24 +10,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 import imageio
 
-import skimage.data as data
-import skimage.segmentation as seg
-import skimage.filters as filters
-import skimage.draw as draw
-import skimage.color as color
-import cannyEdgeDetector as ced
-from PIL import Image
-from skimage import measure
 from os import listdir
 from skimage.morphology import closing
-from scipy import ndimage
 
-from skimage import data
-from skimage.filters import threshold_otsu
 from skimage.segmentation import clear_border
 from skimage.measure import label, regionprops
-from skimage.morphology import closing, square
-from skimage.color import label2rgb
+from skimage.morphology import square
 import matplotlib.patches as mpatches
 
 dirc = 'plaatjes'
@@ -36,7 +24,7 @@ dirc = 'plaatjes'
 ls = listdir(dirc)
 ext = 'png jpg jpeg gif'
 ls = [l for l in ls if l[-3:] in ext and 'mask' not in l and 'cleaning' not in l]
-from statistics import mode
+
 #
 def mask_greens(img,greenthresh=90,redthresh=230,bluethresh=230):
     green = img[:,:,1]>greenthresh
@@ -82,15 +70,11 @@ def clean_box(image,box):
     image[xso,yso]=False
     return image
     
-
-imgs = []
 for f in ls:
     
     img1 = imageio.core.image_as_uint(imageio.imread(dirc+'/'+f))
 
     r,c,_ = img1.shape
-
-    imgs.append(img1)
 
     fig, ax = plt.subplots(2, 2,figsize=(18,12))
     ax[0,0].imshow(img1,cmap='gray')
@@ -99,8 +83,7 @@ for f in ls:
     ax[0,1].imshow(closing(twigs))
 
     img1 = img1[200:1500,:]
-
- 
+    imageio.imwrite('plaatjes/image_{}.png'.format(i),img1)
     greens = closing(mask_greens(img1,))
     greens=clear_border(greens)
     greens = closing(greens,square(10))
@@ -124,3 +107,7 @@ for f in ls:
     plt.title('{:.2f}% percent of the box is plant'.format(pct*100))
     plt.tight_layout()
     plt.savefig('plaatjes/masked_'+f,dpi=300)
+    imageio.imwrite('plaatjes/mask_{}.png'.format(i),greens*255)
+    i=i+1
+    
+    
